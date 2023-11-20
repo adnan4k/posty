@@ -11,7 +11,7 @@ class PostController extends Controller
     //
 
     public function index(){
-       $posts = Post::get();
+       $posts = Post::paginate(3);
         return view('posts.index',
     ["posts" =>$posts]
 
@@ -19,13 +19,24 @@ class PostController extends Controller
     }
 
     public function store(Request $request){
-        $this->validate($request,[
+        $this->validate($request,[    //    dd(["posts" =>$posts]);
+
             'body'=>'required'
         ]);
+         
 
-        $request->user()->posts()->create($request->only('body'));
-
+         $request->user()->posts()->create([
+            'body' => $request->body
+        ]);    
 
       return back();
+    }
+
+    public function destroy(Post $post,Request $request){
+        
+       $post->delete();
+        // dd($post);
+
+        return back();
     }
 }
